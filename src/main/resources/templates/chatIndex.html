@@ -1,0 +1,238 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="">
+    <script src="./jquery-2.2.0.js">
+    </script>
+    <link rel="stylesheet" href="dist/css/bootstrap.css">
+    <script src="dist/js/bootstrap.min.js">
+    </script>
+
+    <style>
+
+      html,body,p,div,ul,li,h1,h2,h3,h4,h5,ol,td,tr{
+          padding:0;
+          margin:0;
+          font-size:16px;
+      }
+      p,span,li,a,input[type=button]{
+          color:#3385ff;
+      }
+        a{
+            text-decoration:none;
+        }
+        ul,li{
+            list-style:none;
+        }
+        input{
+            outline:none;
+
+        }
+        input[type=button]{
+            border:0;
+        }
+        image{
+            border-style:none;
+        }
+        #chatIndex{
+            width:100%;
+            height:100%;
+        }
+        #chatIndex #chatContent{
+            width:100%;
+            height:100%;
+        }
+      #chatIndex #chatContent .loginArea{
+          width:50%;
+          margin:0 auto;
+          background:red;
+          /*height:50px;*/
+      }
+      #chatIndex #chatContent .loginArea input[type=button]{
+          margin-left:150px;
+      }
+      #chatIndex #chatContent .loginArea label,input{
+          margin-right:5px;
+      }
+      #chatIndex #chatContent .chatDisplayArea{
+          width:50%;
+          margin:0 auto;
+          height:200px;
+          overflow:auto;
+          border:1px solid black;
+      }
+      #chatIndex #chatContent .chatDisplayArea #chatDisplayArea{
+          width:100%;
+          height:200px;
+      }
+      #chatIndex #chatContent .inputArea{
+          width:50%;
+          margin:0 auto;
+      }
+        .txtMessage{
+
+        }
+        .videoMessage{
+
+        }
+        .leftDisplay,.rightDisplay{
+           font-size:16px;
+            height:30px;
+            line-height:30px;
+        }
+        .leftDisplay{
+            color:red;
+            padding-left:20px;
+            box-sizing:border-box;
+        }
+        .rightDisplay{
+            color:#2aabd2;
+            text-align: right;
+            padding-right:20px;
+            box-sizing:border-box;
+        }
+        #send{
+            cursor:pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="chatIndex">
+    <div id="chatContent">
+        <div class="loginArea">
+            <label for="online_userName">用户名</label>
+            <input type="text" name="online_userName" id="online_userName">
+            <label for="userSelect">教师选择</label>
+            <select name="userSelect" id="userSelect">
+                <option value="0">老师1</option>
+                <option value="1">老师2</option>
+                <option value="2">老师3</option>
+                <option value="3">老师4</option>
+            </select>
+            <input type="button" value="连接">
+        </div>
+
+        <div class="chatDisplayArea">
+           <div id="chatDisplayArea">
+
+           </div>
+        </div>
+        <div class="inputArea">
+            <div class="input-group">
+                <span class="input-group-addon glyphicon glyphicon-record"></span>
+                <input type="text" class="form-control inpTxt">
+                <span class="input-group-addon" id="send">发送</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var userName=document.getElementById("online_userName");
+    var techSelect=document.getElementById("userSelect");
+    var loginArea=document.getElementsByClassName("loginArea")[0];
+    var conn=loginArea.lastElementChild;
+    var techList=techSelect.children;
+    var len=techList.length;
+    var chatArea=document.getElementById("chatDisplayArea");
+    var send=document.getElementById("send");
+    var inpTxt=document.getElementsByClassName("inpTxt")[0];
+
+//    console.log(techList);
+    for(var i=0;i<len;i++){
+
+        techList[i].onclick=function(){
+            for(j=0;j<len;j++){
+                techList[j].selected=false;
+            }
+            this.selected=true;
+        }
+
+
+    }
+
+    WebSocketTest();
+
+    function WebSocketTest() {
+        if ("WebSocket" in window) {
+            alert("您的浏览器支持 WebSocket!");
+
+            var ws = new WebSocket("ws://localhost:8080/demo/websocket/cui");
+
+               if(inpTxt.value===''){
+                    return ;
+               }
+               var sendBox1=document.createElement("div");
+               sendBox1.innerText=inpTxt.value;
+               sendBox1.className="rightDisplay";
+               alert(inpTxt.value);
+               var sendBox2=document.createElement("div");
+               chatArea.appendChild(sendBox1);
+
+               for(var k=0;k<len;k++){
+                   if(techList[k].selected){
+                       var techId=techList[k].value;
+                   }
+               }
+
+               var data={
+                    fromUser:userName.value,
+                    toUser:techId,
+                    message:inpTxt.value,
+
+
+               };
+
+               ws.onopen = function() {
+
+
+                   ws.send("hello world");
+                   alert("数据发送中...");
+               };
+
+
+
+            ws.onmessage = function (e) {
+                var received_msg = JSON_parse(e.data);
+                alert("数据已接收...");
+                var leftDiv1=docuemnt.createElement("div");
+                var leftDiv2=docuemnt.createElement("div");
+                leftDiv1.innerHTML=received_msg.messgae;
+                leftDiv1.className='leftDisplay';
+                chatArea.appendChild(leftDiv1);
+
+            };
+
+            ws.onclose = function() {
+                chatArea.innerHTML='';
+                alert("连接已关闭...");
+            };
+        } else {
+
+            alert("您的浏览器不支持 WebSocket!");
+        }
+    }
+    function scrollMessage(ele,targetEle){
+
+
+
+
+    }
+    function scroll(){
+        return {
+
+            top:window.pageYOffset || document.documentElement.clientHeight || document.body.scrollTop,
+            left:window.pageXOffset || document.documentElement.clientWidth || document.body.scrollLeft
+
+        }
+    }
+
+</script>
+</body>
+</html>

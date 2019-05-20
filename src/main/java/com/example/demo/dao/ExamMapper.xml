@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.ExamMapper" >
+
+    <resultMap id="ExamResultMap" type="com.example.demo.entity.Exam" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="courseName" property="courseName" jdbcType="VARCHAR" />
+        <result column="classId" property="classId" jdbcType="VARCHAR" />  
+         <result column="stuIds" property="stuIds" jdbcType="VARCHAR" />
+        <result column="paperIds" property="paperIds" jdbcType="VARCHAR" />
+        <result column="time" property="time" jdbcType="BIGINT" />
+        <result column="dateTime" property="dateTime" jdbcType="VARCHAR" />  
+         <result column="teacher" property="teacher" jdbcType="VARCHAR" />
+               
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        id,courseName,classId,stuIds,paperIds,time,dateTime,teacher
+    </sql>
+
+   <resultMap id="PaperResultMap" type="com.example.demo.entity.Paper" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="typeId" property="typeId" jdbcType="BIGINT" />
+         <result column="questionIds" property="questionIds" jdbcType="VARCHAR" />
+        <result column="targetId" property="targetId" jdbcType="BIGINT" />           
+    </resultMap>
+    
+    <sql id="Base_Column_List1" >
+        id,typeId,questionIds,targetId
+    </sql>
+
+   <resultMap id="QuestionResultMap" type="com.example.demo.entity.Question" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+         <result column="question" property="question" jdbcType="VARCHAR" />
+          <result column="answer" property="answer" jdbcType="VARCHAR" />
+           <result column="selection" property="selection" jdbcType="VARCHAR" /> 
+        <result column="objective" property="objective" jdbcType="BIGINT" />  
+         <result column="typeId" property="typeId" jdbcType="BIGINT" />          
+    </resultMap>
+    
+    <sql id="Base_Column_List2" >
+        id,question,answer,selection,objective,typeId
+    </sql>
+
+<resultMap id="TypeResultMap" type="com.example.demo.entity.Type" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+         <result column="introduce" property="introduce" jdbcType="VARCHAR" />
+        <result column="score" property="score" jdbcType="BIGINT" />           
+    </resultMap>
+    
+    <sql id="Base_Column_List3" >
+        id,name,introduce,score
+    </sql>
+
+<resultMap id="MessageResultMap" type="com.example.demo.entity.Message" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="topic" property="topic" jdbcType="VARCHAR" />
+         <result column="message" property="message" jdbcType="VARCHAR" />
+        <result column="fromUser" property="fromUser" jdbcType="VARCHAR" />   
+         <result column="timeStamp" property="timeStamp" jdbcType="TIMESTAMP"/>       
+    </resultMap>
+
+<resultMap id="ResultResultMap" type="com.example.demo.entity.Result1" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="userName" property="userName" jdbcType="VARCHAR" />
+         <result column="examId" property="examId" jdbcType="BIGINT" />
+        <result column="questionIds" property="questionIds" jdbcType="VARCHAR" />   
+         <result column="results" property="results" jdbcType="VARCHAR"/>       
+    </resultMap>
+    
+    
+    <select id="getExamById" parameterType="java.lang.Long"  resultMap="ExamResultMap" >
+        SELECT 
+       id,courseName,classId,stuIds,paperIds,time,dateTime,teacher
+       FROM exam
+       WHERE id =#{id}
+    </select>
+ 
+    <insert id="insertExam" useGeneratedKeys="true"  keyProperty="id" parameterType="com.example.demo.entity.Exam" >
+       INSERT INTO 
+               exam
+               (courseName,classId,stuIds,paperIds,time,dateTime,teacher) 
+           VALUES
+               (#{courseName},#{classId},#{stuIds},#{paperIds},#{time},#{dateTime},#{teacher})
+    </insert>
+
+        <select id="getPaperById" parameterType="java.lang.Long"  resultMap="PaperResultMap" >
+        SELECT 
+       <include refid="Base_Column_List1" />
+       FROM paper
+       WHERE id =#{id}
+    </select>
+ 
+    <insert id="insertPaper" useGeneratedKeys="true"  keyProperty="id" parameterType="com.example.demo.entity.Paper" >
+       INSERT INTO 
+               paper
+               (typeId,questionIds,targetId) 
+           VALUES
+               (#{typeId}, #{questionIds},#{targetId})
+    </insert>
+    
+     <select id="getQuestionById" parameterType="java.lang.Long"  resultMap="QuestionResultMap" >
+        SELECT 
+       <include refid="Base_Column_List2" />
+       FROM question
+       WHERE id =#{id}
+    </select>
+ 
+    <insert id="insertQuestion" useGeneratedKeys="true"  keyProperty="id" parameterType="com.example.demo.entity.Question" >
+       INSERT INTO 
+               question
+               (question,answer,selection,objective,typeId) 
+           VALUES
+               (#{question},#{answer},#{selection},#{objective},#{typeId})
+    </insert>
+    
+    
+       <select id="getTypeById" parameterType="java.lang.Long"  resultMap="TypeResultMap" >
+        SELECT 
+       <include refid="Base_Column_List3" />
+       FROM type
+       WHERE id =#{id}
+    </select>
+ 
+    <insert id="insertMessage" useGeneratedKeys="true"  keyProperty="id" parameterType="com.example.demo.entity.Message" >
+       INSERT INTO 
+               message
+               (topic,message,fromUser,timeStamp) 
+           VALUES
+               (#{topic},#{message},#{fromUser},#{timeStamp})
+    </insert>
+    <select id="getAllMessage"  resultMap="MessageResultMap" >
+        SELECT 
+       id,topic,message,fromUser,timeStamp
+       FROM message
+      
+    </select>
+ 
+    <insert id="insertType" useGeneratedKeys="true"  keyProperty="id" parameterType="com.example.demo.entity.Type" >
+       INSERT INTO 
+               type
+               (name,introduce,score) 
+           VALUES
+               (#{name},#{introduce},#{score})
+    </insert>
+    <select id="getResultById" parameterType="java.lang.Long"  resultMap="ResultResultMap" >
+        SELECT 
+       id,userName,examId,questionIds,results
+       FROM result
+       WHERE id =#{id}
+    </select>
+    
+    <insert id="insertResult" useGeneratedKeys="true"  keyProperty="id" parameterType="com.example.demo.entity.Result1" >
+       INSERT INTO 
+               result
+               (userName,examId,questionIds,results) 
+           VALUES
+               (#{userName},#{examId},#{questionIds},#{results})
+    </insert>
+</mapper>

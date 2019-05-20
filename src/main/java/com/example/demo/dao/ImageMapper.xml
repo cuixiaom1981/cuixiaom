@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.ImageMapper" >
+
+    <resultMap id="ImageResultMap" type="com.example.demo.entity.Image" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="image" property="image" jdbcType="VARCHAR" />   
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        id,name,image
+    </sql>
+
+   <resultMap id="AudioResultMap" type="com.example.demo.entity.Audio" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="toUser" jdbcType="VARCHAR" />
+         <result column="name" property="fromUser" jdbcType="VARCHAR" />
+        <result column="image" property="audio" jdbcType="VARCHAR" />           
+    </resultMap>
+    
+    <sql id="Base_Column_List1" >
+        id,toUser,fromUser,audio
+    </sql>
+
+    <select id="getImageByName" parameterType="java.lang.String"  resultType="java.lang.String" >
+        SELECT 
+       image
+       FROM user
+       WHERE userName =#{name}
+    </select>
+ 
+    <insert id="insertAudio" useGeneratedKeys="true"  keyProperty="id" parameterType="com.example.demo.entity.Audio" >
+       INSERT INTO 
+               audio
+               (toUser,fromUser,audio) 
+           VALUES
+               (#{toUser}, #{fromUser},#{audio})
+    </insert>
+
+        <select id="getAudioById" parameterType="long"  resultMap="AudioResultMap" >
+        SELECT 
+       <include refid="Base_Column_List1" />
+       FROM audio
+       WHERE id =#{id}
+    </select>
+ 
+    <insert id="insertImage" useGeneratedKeys="true"  keyProperty="id" parameterType="com.example.demo.entity.Image" >
+       INSERT INTO 
+               image
+               (name,image) 
+           VALUES
+               (#{name}, #{image})
+    </insert>
+
+</mapper>

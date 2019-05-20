@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>FaceDetect</title>
+</head>
+<body>
+
+<div style="visibility: hidden;width:0; height:0;">
+    <canvas id="canvas" width="640"  height="480"></canvas>
+</div>
+
+<div>
+    <video id="video" autoplay style="display: inline;"></video>
+    <img id="target" style="display:inline;"/>
+</div>
+
+<script type="text/javascript">
+
+//    var ws = new WebSocket("ws://127.0.0.1:1234/");
+//    ws.binaryType = "arraybuffer";
+//
+//    ws.onopen = function() {
+//        ws.send("I'm client");
+//    };
+//
+//    ws.onmessage = function (evt) {
+//        var bytes = new Uint8Array(evt.data);
+//        var data = "";
+//        var len = bytes.byteLength;
+//        for (var i = 0; i < len; ++i) {
+//            data += String.fromCharCode(bytes[i]);
+//        }
+//        var img = document.getElementById("target");
+//        img.src = "data:image/png;base64,"+window.btoa(data);
+//    };
+
+//    ws.onclose = function() {
+//        alert("Closed");
+//    };
+//
+//    ws.onerror = function(err) {
+//        alert("Error: " + err);
+//    };
+
+    navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+
+    var video = document.getElementById('video');
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var img=document.getElementById("target");
+    if(navigator.getUserMedia) {
+        navigator.getUserMedia({
+            video: true
+        }, function (stream) {
+
+//            console.log(stream);
+            video.srcObject=stream;
+//            video.src=window.URL.createEventObject(stream);
+//
+//            if ('MediaSource' in window) {
+//                var mediaSource = new MediaSource();
+//                //console.log(mediaSource.readyState); // closed
+//                console.log(mediaSource);
+//                video.src = window.URL.createObjectURL(mediaSource);
+//               mediaSource.addEventListener('sourceopen', sourceOpen);
+//            }
+//          else {
+//                console.error('Unsupported MIME type or codec: ', mimeCodec);
+//            }
+
+
+            video.onloadedmetadata = function (e) {
+                alert("调用摄像头成功！");
+//                console.log("Label: " + localMediaStream.label);
+//                console.log("AudioTracks", localMediaStream.getAudioTracks());
+//                console.log("VideoTracks", localMediaStream.getVideoTracks());
+
+
+                ctx.strokeStyle="red" ;
+                ctx.strokeRect(0,0,640,480);
+//            console.log("video="+video);
+//            console.log(video);
+                var w=canvas.width;
+                var h=canvas.height;
+//            console.log(video.width);
+                ctx.drawImage(video, 0, 0,w,h);
+
+                var dataUrl = canvas.toDataURL('image/jpeg');
+                console.log("data="+dataUrl);
+                img.src=dataUrl;
+                newblob = dataURItoBlob(dataUrl);
+
+            };
+        }, function (e) {
+            console.log('Rejected!', e);
+        })
+    };
+//
+    function dataURItoBlob(dataURI) {
+        // convert base64/URLEncoded data component to raw binary data held in a string
+        var byteString;
+        if (dataURI.split(',')[0].indexOf('base64') >= 0)
+            byteString = btoa(dataURI.split(',')[1]);
+            console.log(byteString);
+
+        // separate out the mime component
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+        // write the bytes of the string to a typed array
+        var ia = new Uint8Array(byteString.length);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([ia], {type:mimeString});
+    }
+
+
+</script>
+</body>
+
+</html>
